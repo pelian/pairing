@@ -1,4 +1,4 @@
-from pairing import *
+from pairing import cantor_pair, cantor_unpair, szudzik_pair, szudzik_unpair
 import numpy as np
 
 # Test variables
@@ -7,9 +7,7 @@ UB = 100000 # Random integer upper bound
 TESTS = 10000 # Number of test runs
 
 def pairing_test(lower: int, upper: int, tests: int):
-    cp_error = []
-    sp_error = []
-    sxp_error = []
+    error = []
     for test in range(tests):
         x = np.random.randint(lower, upper)
         y = np.random.randint(lower, upper)
@@ -19,26 +17,24 @@ def pairing_test(lower: int, upper: int, tests: int):
         cu = cantor_unpair(cp)
         print('({}, {}) - Cantor unpair: {}, Cantor pair {}'.format(x, y, cu, cp))
         if cu[0] != x or cu[1] != y:
-            cp_error.append([test, (x, y), cu])
-            print('error in Cantor pairing function')
+            error.append(['Cantor', test, (x, y), cu])            
 
         # Pair and unpair using Szudzik pairing algorithm
-        sp = szudzik_pair((x, y))
-        su = szudzik_unpair(sp)
-        print('({}, {}) - Szudzik A unpair: {}, Szudzik A pair {}'.format(x, y, su, sp))
-        if su[0] != x or su[1] != y:
-            sp_error.append([test, (x, y), su])
-            print('error in Szudzik A pairing function')
+        sap = szudzik_pair((x, y))
+        sau = szudzik_unpair(sap)
+        print('({}, {}) - Szudzik A unpair: {}, Szudzik A pair {}'.format(x, y, sau, sap))
+        if sau[0] != x or sau[1] != y:
+            error.append(['Szudzik A', test, (x, y), sau])
 
         # Pair and unpair using Szudzik B pairing algorithm - map to negative integers
-        sxp = szudzik_pair((x, y), True)
-        sxu = szudzik_unpair(sxp)
-        print('({}, {}) - Szudzik B unpair: {}, Szudzik B pair {}'.format(x, y, sxu, sxp))
-        if sxu[0] != x or sxu[1] != y:
-            sxp_error.append([test, (x, y), sxu])
-            print('error in Szudzik B pairing function')
+        sbp = szudzik_pair((x, y), True)
+        sbu = szudzik_unpair(sbp)
+        print('({}, {}) - Szudzik B unpair: {}, Szudzik B pair {}'.format(x, y, sbu, sbp))
+        if sbu[0] != x or sbu[1] != y:
+            error.append(['Szudzik B', test, (x, y), sbu])
 
-    if len(cp_error) > 0 or len(sp_error) > 0:
-        return cp_error, sp_error
+    if len(error) > 0:
+        print('error was found in a pairing function')
+        return error
 
 pairing_test(LB, UB, TESTS)
